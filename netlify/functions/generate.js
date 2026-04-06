@@ -1,17 +1,22 @@
-exports.handler = async function(event, context) {
+exports.handler = async function (event, context) {
   if (event.httpMethod !== "POST") {
     return { statusCode: 405, body: "Method Not Allowed" };
   }
 
   const apiKey = process.env.GEMINI_API_KEY;
-  
+
   // Если ключ забыли добавить в Netlify
   if (!apiKey) {
-    return { statusCode: 500, body: JSON.stringify({ error: { message: "API ключ не найден в настройках Netlify" } }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: { message: "API ключ не найден в настройках Netlify" },
+      }),
+    };
   }
 
   // ВАЖНО: Используем стабильную версию модели gemini-1.5-flash
-  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+  const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`;
 
   try {
     const payload = JSON.parse(event.body);
@@ -28,7 +33,7 @@ exports.handler = async function(event, context) {
     if (!response.ok) {
       return {
         statusCode: response.status,
-        body: JSON.stringify(data)
+        body: JSON.stringify(data),
       };
     }
 
@@ -37,6 +42,9 @@ exports.handler = async function(event, context) {
       body: JSON.stringify(data),
     };
   } catch (error) {
-    return { statusCode: 500, body: JSON.stringify({ error: { message: "Внутренняя ошибка сервера" } }) };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: { message: "Внутренняя ошибка сервера" } }),
+    };
   }
 };
