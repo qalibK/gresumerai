@@ -1,0 +1,553 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Resume Adapter | Your personal career cheat code</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+          Arial, sans-serif;
+        background-color: #f8fafc;
+        color: #0f172a;
+      }
+      /* Custom scrollbar for textareas */
+      textarea::-webkit-scrollbar {
+        width: 8px;
+      }
+      textarea::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 4px;
+      }
+      textarea::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+      textarea::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      /* Result HTML styling */
+      .prose h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 0.5rem;
+      }
+      .prose h2:first-child {
+        margin-top: 0;
+      }
+      .prose hr {
+        border-color: #cbd5e1;
+        margin: 2rem 0;
+      }
+      .prose h3 {
+        font-size: 1.125rem;
+        font-weight: 600;
+        color: #1e293b;
+        margin-top: 1.5rem;
+        margin-bottom: 0.75rem;
+      }
+      .prose ul {
+        list-style-type: disc;
+        padding-left: 1.5rem;
+        margin-bottom: 1.5rem;
+        color: #334155;
+      }
+      .prose li {
+        margin-bottom: 0.5rem;
+      }
+      .prose p {
+        margin-bottom: 1rem;
+        color: #334155;
+        line-height: 1.6;
+      }
+      .prose p:last-child {
+        margin-bottom: 0;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <!-- Navigation -->
+    <header
+      class="bg-white border-b border-slate-200 sticky top-0 z-10 shadow-sm"
+    >
+      <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+          <div class="flex items-center gap-2">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+              <i data-lucide="file-text" class="w-5 h-5"></i>
+            </div>
+            <span class="text-xl font-bold text-slate-800 tracking-tight"
+              >GResumer<span class="text-indigo-600">.ai</span></span
+            >
+          </div>
+          <div class="flex items-center gap-4">
+            <span
+              class="text-sm font-medium text-slate-500 hidden sm:inline-block"
+              id="generationsCount"
+              >Free generations left: 1</span
+            >
+            <div class="flex gap-2 text-sm font-bold">
+              <a href="index.html" class="hover:text-indigo-600">RU</a>
+              <a href="en.html" class="hover:text-indigo-600">EN</a>
+            </div>
+            <button
+              onclick="showPaymentModal()"
+              class="text-sm font-medium text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-full transition"
+            >
+              Buy subscription
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main content -->
+    <main class="flex-grow max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+      <div class="text-center mb-10 max-w-2xl mx-auto">
+        <h1
+          class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4 tracking-tight"
+        >
+          Tailor your resume to a job in
+          <span class="text-indigo-600">5 seconds</span>
+        </h1>
+        <p class="text-lg text-slate-600">
+          Forget manual edits. Our AI will analyze the job posting and your
+          resume, highlight relevant experience, and write the perfect cover
+          letter.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Left column: Input form -->
+        <div
+          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full"
+        >
+          <div class="mb-5 flex-none">
+            <label
+              for="countryInput"
+              class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2"
+            >
+              <i data-lucide="globe" class="w-4 h-4 text-slate-400"></i> Target
+              country (resume format)
+            </label>
+            <select
+              id="countryInput"
+              class="w-full p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition outline-none text-sm bg-white cursor-pointer"
+            >
+              <option value="USA / Canada">
+                USA / Canada (No photo or age, emphasize numbers)
+              </option>
+              <option value="Europe (EU)">Europe (EU format / Europass)</option>
+              <option value="United Kingdom">United Kingdom (UK format)</option>
+              <option value="Russia / CIS">Russia / CIS</option>
+              <option value="Asia / Middle East">Asia / Middle East</option>
+              <option value="International (Universal)">
+                International (Universal)
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-5 flex-1 flex flex-col">
+            <label
+              for="resumeInput"
+              class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2"
+            >
+              <i data-lucide="user" class="w-4 h-4 text-slate-400"></i> Your
+              current resume
+            </label>
+            <textarea
+              id="resumeInput"
+              rows="6"
+              class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none transition outline-none text-sm sm:text-base flex-1"
+              placeholder="Paste your resume text here (work experience, skills, about you)..."
+            ></textarea>
+          </div>
+
+          <div class="mb-5 flex-1 flex flex-col">
+            <label
+              for="jobInput"
+              class="block text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2"
+            >
+              <i data-lucide="briefcase" class="w-4 h-4 text-slate-400"></i> Job
+              description
+            </label>
+            <textarea
+              id="jobInput"
+              rows="6"
+              class="w-full p-4 border border-slate-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none transition outline-none text-sm sm:text-base flex-1"
+              placeholder="Paste the job posting you want to apply to (requirements, responsibilities)..."
+            ></textarea>
+          </div>
+
+          <button
+            id="generateBtn"
+            onclick="handleGenerate()"
+            class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-xl transition flex justify-center items-center gap-2 shadow-sm hover:shadow"
+          >
+            <i data-lucide="zap" class="w-5 h-5"></i>
+            Generate Application
+          </button>
+          <p
+            id="errorMsg"
+            class="text-red-500 text-sm text-center mt-3 hidden"
+          ></p>
+        </div>
+
+        <!-- Right column: Result -->
+        <div
+          class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full relative overflow-hidden"
+          id="resultContainer"
+        >
+          <!-- Pre-generation state -->
+          <div
+            id="emptyState"
+            class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10 bg-white"
+          >
+            <div class="bg-slate-50 p-4 rounded-full mb-4">
+              <i data-lucide="sparkles" class="w-8 h-8 text-indigo-400"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">
+              Your result will appear here
+            </h3>
+            <p class="text-slate-500 text-sm max-w-sm">
+              Fill in the fields on the left and click Generate. The AI will
+              prepare a resume summary and write a Cover Letter.
+            </p>
+          </div>
+
+          <!-- Loading state -->
+          <div
+            id="loadingState"
+            class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-10 bg-white hidden"
+          >
+            <div
+              class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mb-4"
+            ></div>
+            <h3 class="text-lg font-bold text-slate-800 mb-1">
+              AI is analyzing the data...
+            </h3>
+            <p class="text-slate-500 text-sm">
+              This usually takes 5–10 seconds.
+            </p>
+          </div>
+
+          <!-- Result (hidden by default) -->
+          <div
+            id="successState"
+            class="hidden flex-col h-full z-10 bg-white relative"
+          >
+            <div
+              class="flex justify-between items-center mb-4 border-b border-slate-100 pb-4"
+            >
+              <h2 class="text-xl font-bold text-slate-800">
+                Your tailored application
+              </h2>
+              <button
+                onclick="copyToClipboard()"
+                class="text-slate-500 hover:text-indigo-600 transition flex items-center gap-1 text-sm font-medium"
+                title="Copy all"
+              >
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                <span id="copyText">Copy</span>
+              </button>
+            </div>
+
+            <div
+              id="generatedContent"
+              class="prose flex-1 overflow-y-auto pr-2"
+            >
+              <!-- AI-generated HTML will be inserted here -->
+            </div>
+
+            <div class="mt-6 pt-4 border-t border-slate-100">
+              <div
+                class="bg-indigo-50 border border-indigo-100 rounded-xl p-4 flex items-center justify-between"
+              >
+                <div>
+                  <h4 class="font-bold text-indigo-900 text-sm">
+                    Like the result?
+                  </h4>
+                  <p class="text-indigo-700 text-xs mt-1">
+                    Pay $5 to get 10 more generations.
+                  </p>
+                </div>
+                <button
+                  onclick="showPaymentModal()"
+                  class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-bold py-2 px-4 rounded-lg transition shadow-sm"
+                >
+                  Pay $5
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Payment modal (stub) -->
+    <div
+      id="paymentModal"
+      class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm hidden flex items-center justify-center z-50 transition-opacity"
+    >
+      <div
+        class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full mx-4 transform scale-95 opacity-0 transition-all"
+        id="paymentModalContent"
+      >
+        <div class="text-center">
+          <div
+            class="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-4"
+          >
+            <i data-lucide="credit-card" class="w-8 h-8"></i>
+          </div>
+          <h3 class="text-2xl font-bold text-slate-900 mb-2">
+            Proceed to payment
+          </h3>
+          <p class="text-slate-600 mb-6">
+            In a real application this would redirect to a
+            <b>Stripe Payment Link</b>.<br /><br />
+            The user pays $5, and a Stripe webhook updates their generation
+            limit in the database.
+          </p>
+          <div class="space-y-3">
+            <button
+              onclick="simulatePaymentSuccess()"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded-xl transition"
+            >
+              Simulate successful payment
+            </button>
+            <button
+              onclick="closePaymentModal()"
+              class="w-full bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3 px-4 rounded-xl transition"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Initialize icons
+      lucide.createIcons();
+
+      // API settings (Gemini)
+      const API_URL = "/.netlify/functions/generate";
+      // Local state (for MVP)
+      let generationsLeft = 1;
+
+      // DOM elements
+      const countryInput = document.getElementById("countryInput");
+      const resumeInput = document.getElementById("resumeInput");
+      const jobInput = document.getElementById("jobInput");
+      const generateBtn = document.getElementById("generateBtn");
+      const errorMsg = document.getElementById("errorMsg");
+
+      const emptyState = document.getElementById("emptyState");
+      const loadingState = document.getElementById("loadingState");
+      const successState = document.getElementById("successState");
+      const generatedContent = document.getElementById("generatedContent");
+      const generationsCountText = document.getElementById("generationsCount");
+
+      const paymentModal = document.getElementById("paymentModal");
+      const paymentModalContent = document.getElementById(
+        "paymentModalContent",
+      );
+
+      // Function to call API with exponential backoff
+      async function fetchWithRetry(url, options, retries = 5) {
+        const delays = [1000, 2000, 4000, 8000, 16000];
+        for (let i = 0; i < retries; i++) {
+          try {
+            const response = await fetch(url, options);
+            if (!response.ok) {
+              const errData = await response.json().catch(() => ({}));
+              throw new Error(
+                `HTTP error! status: ${response.status}. ${errData.error?.message || ""}`,
+              );
+            }
+            return await response.json();
+          } catch (error) {
+            console.warn(`Attempt ${i + 1} failed:`, error);
+            if (i === retries - 1) throw error;
+            await new Promise((res) => setTimeout(res, delays[i]));
+          }
+        }
+      }
+
+      // Main generation handler
+      async function handleGenerate() {
+        const countryText = countryInput.value;
+        const resumeText = resumeInput.value.trim();
+        const jobText = jobInput.value.trim();
+
+        // Validation
+        errorMsg.classList.add("hidden");
+        if (!resumeText || !jobText) {
+          errorMsg.textContent =
+            "Please fill in both fields (Resume and Job description).";
+          errorMsg.classList.remove("hidden");
+          return;
+        }
+
+        if (generationsLeft <= 0) {
+          showPaymentModal();
+          return;
+        }
+
+        // UI state: loading
+        generateBtn.disabled = true;
+        generateBtn.classList.add("opacity-70", "cursor-not-allowed");
+        emptyState.classList.add("hidden");
+        successState.classList.add("hidden");
+        loadingState.classList.remove("hidden");
+
+        const systemPromptLines = [
+          "Please respond in English.",
+          "You are a professional HR expert and career coach.",
+          "Your task is to analyze the candidate's original resume and the job description, then produce a complete, finalized resume and a short cover letter. Do not provide general advice or extra commentary — only output the finished documents.",
+          "Adapt the resume's format, style, and content to the conventions of the selected target country.",
+          "",
+          "Instructions for output format:",
+          "- Reply in plain HTML (do not include Markdown code fences).",
+          "- Use only these HTML tag names where appropriate: 'h2', 'h3', 'ul', 'li', 'p', 'strong', 'hr'.",
+          "",
+          "Output structure:",
+          "1) A resume section with a header titled: '📄 Finished Resume' and a short parenthetical note showing the target market, for example: (Adapted for market: [Country name]). Then provide: Contacts (use placeholders if missing), Summary, Work Experience (rewritten and aligned to job keywords), Skills, Education.",
+          "2) A horizontal rule, then a cover letter section with a header titled: '✉️ Cover Letter' and a concise, persuasive cover letter of 3–4 short paragraphs that explains why the candidate is a strong fit, the value they will bring, and includes a clear call to action.",
+        ];
+        const systemPrompt = systemPromptLines.join("\n");
+
+        const userPrompt = `TARGET COUNTRY: ${countryText}\n\nCANDIDATE RESUME:\n${resumeText}\n\nJOB DESCRIPTION:\n${jobText}`;
+
+        const payload = {
+          contents: [{ parts: [{ text: userPrompt }] }],
+          systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+
+        try {
+          const data = await fetchWithRetry(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (aiResponse) {
+            // Remove markdown fences in case the AI added them
+            let cleanHtml = aiResponse
+              .replace(/```html/g, "")
+              .replace(/```/g, "")
+              .trim();
+
+            generatedContent.innerHTML = cleanHtml;
+
+            // Success
+            loadingState.classList.add("hidden");
+            successState.classList.remove("hidden");
+            successState.classList.add("flex");
+
+            generationsLeft--;
+            updateGenerationsCounter();
+          } else {
+            throw new Error("Invalid response format from server.");
+          }
+        } catch (error) {
+          console.error("API error:", error);
+          loadingState.classList.add("hidden");
+          emptyState.classList.remove("hidden");
+          errorMsg.textContent =
+            "An error occurred while connecting to the AI. Please try again later.";
+          errorMsg.classList.remove("hidden");
+        } finally {
+          generateBtn.disabled = false;
+          generateBtn.classList.remove("opacity-70", "cursor-not-allowed");
+        }
+      }
+
+      // Utilities
+      function updateGenerationsCounter() {
+        if (generationsLeft > 0) {
+          generationsCountText.textContent = `Free generations left: ${generationsLeft}`;
+          generateBtn.innerHTML = `<i data-lucide="zap" class="w-5 h-5"></i> Generate Application`;
+        } else {
+          generationsCountText.textContent = `Limit reached. Payment required.`;
+          generateBtn.innerHTML = `<i data-lucide="lock" class="w-5 h-5"></i> Pay to Generate`;
+          generateBtn.classList.remove("bg-indigo-600", "hover:bg-indigo-700");
+          generateBtn.classList.add("bg-slate-800", "hover:bg-slate-900");
+        }
+        lucide.createIcons();
+      }
+
+      function copyToClipboard() {
+        // Extract text without HTML tags for copying
+        const textToCopy = generatedContent.innerText;
+
+        // Use document.execCommand as a fallback for iframes
+        const textArea = document.createElement("textarea");
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand("copy");
+          const copyTextSpan = document.getElementById("copyText");
+          const originalText = copyTextSpan.innerText;
+          copyTextSpan.innerText = "Copied!";
+          setTimeout(() => {
+            copyTextSpan.innerText = originalText;
+          }, 2000);
+        } catch (err) {
+          console.error("Copy failed", err);
+        }
+        document.body.removeChild(textArea);
+      }
+
+      // Modal control
+      function showPaymentModal() {
+        paymentModal.classList.remove("hidden");
+        // Small delay for animation
+        setTimeout(() => {
+          paymentModalContent.classList.remove("scale-95", "opacity-0");
+          paymentModalContent.classList.add("scale-100", "opacity-100");
+        }, 10);
+      }
+
+      function closePaymentModal() {
+        paymentModalContent.classList.remove("scale-100", "opacity-100");
+        paymentModalContent.classList.add("scale-95", "opacity-0");
+        setTimeout(() => {
+          paymentModal.classList.add("hidden");
+        }, 200); // matches transition-all duration
+      }
+
+      function simulatePaymentSuccess() {
+        generationsLeft += 10;
+        updateGenerationsCounter();
+        closePaymentModal();
+
+        // Restore button styles if limit was reached
+        generateBtn.classList.add("bg-indigo-600", "hover:bg-indigo-700");
+        generateBtn.classList.remove("bg-slate-800", "hover:bg-slate-900");
+
+        // Show a small toast notification
+        const toast = document.createElement("div");
+        toast.className =
+          "fixed bottom-4 right-4 bg-green-600 text-white px-6 py-3 rounded-xl shadow-lg font-medium transition-opacity duration-500 z-50";
+        toast.textContent = "Payment successful! 10 generations added.";
+        document.body.appendChild(toast);
+
+        setTimeout(() => {
+          toast.classList.add("opacity-0");
+          setTimeout(() => toast.remove(), 500);
+        }, 3000);
+      }
+    </script>
+  </body>
+</html>
