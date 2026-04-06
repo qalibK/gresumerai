@@ -338,8 +338,8 @@
       lucide.createIcons();
 
       // API settings (Gemini)
-      const apiKey = ""; // API ключ автоматически подставляется окружением
-      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+      const apiKey = "AIzaSyCSv4xzUiJqG0cOWYOGFyLlwfzsz0bVaJ4"; // API ключ автоматически подставляется окружением
+      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
 
       // Local state (for MVP)
       let generationsLeft = 1;
@@ -436,7 +436,10 @@
         try {
           const data = await fetchWithRetry(API_URL, {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+              "Content-Type": "application/json",
+              "X-goog-api-key": apiKey,
+            },
             body: JSON.stringify(payload),
           });
 
