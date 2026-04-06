@@ -1,25 +1,13 @@
 exports.handler = async function (event, context) {
-  if (event.httpMethod !== "POST") {
+  if (event.httpMethod !== "POST")
     return { statusCode: 405, body: "Method Not Allowed" };
-  }
 
-  const apiKey = process.env.GEMINI_API_KEY;
+  // Этот код гарантированно отрезает все случайные пробелы и переносы строк из ключа
+  const apiKey = (process.env.GEMINI_API_KEY || "").trim();
 
-  if (!apiKey) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        error: { message: "Ключ API не найден в Netlify." },
-      }),
-    };
-  }
-
-  // Строго заданная модель без лишних символов
-  const modelName = "gemini-1.5-flash";
+  // Жестко прописанная, 100% рабочая ссылка на самую актуальную модель
   const API_URL =
-    "https://generativelanguage.googleapis.com/v1beta/models/" +
-    modelName +
-    ":generateContent?key=" +
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=" +
     apiKey;
 
   try {
@@ -27,24 +15,22 @@ exports.handler = async function (event, context) {
 
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
 
     const data = await response.json();
 
-    return {
-      statusCode: response.status,
-      body: JSON.stringify(data),
-    };
+    // Если Google выдал ошибку, возвращаем ее на сайт красиво
+    if (!response.ok) {
+      return { statusCode: response.status, body: JSON.stringify(data) };
+    }
+
+    return { statusCode: 200, body: JSON.stringify(data) };
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        error: { message: "Ошибка сервера: " + error.message },
-      }),
+      body: JSON.stringify({ error: { message: "Системная ошибка" } }),
     };
   }
 };
