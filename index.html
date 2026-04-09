@@ -271,16 +271,13 @@
       </div>
     </div>
 
+    <script src="api-key.js"></script>
     <script>
       // Инициализация иконок
       lucide.createIcons();
 
       // API Настройки (Gemini)
-      const apiKey = "AIzaSyDX0dPNNnkGHza4fPxp9-2SrQK8GrjHsPM"; // API ключ автоматически подставляется окружением
-      const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
-
-      // Локальное состояние (для MVP)
-      let generationsLeft = 1;
+      const apiKey = window.API_KEY || "";
 
       // DOM Элементы
       const countryInput = document.getElementById("countryInput");
@@ -373,6 +370,12 @@
         };
 
         try {
+          if (!apiKey) {
+            throw new Error(
+              "API key not found. Please add it to api-key.js and do not commit the real key.",
+            );
+          }
+
           const data = await fetchWithRetry(API_URL, {
             method: "POST",
             headers: {
