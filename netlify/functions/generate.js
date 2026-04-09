@@ -1,4 +1,11 @@
 exports.handler = async function (event) {
+  console.log("Netlify function generate invoked", {
+    method: event.httpMethod,
+    path: event.path || event.rawUrl || "/api/generate",
+    bodyLength: event.body?.length || 0,
+    hasApiKey: !!process.env.GOOGLE_API_KEY,
+  });
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
@@ -10,6 +17,7 @@ exports.handler = async function (event) {
   try {
     body = JSON.parse(event.body);
   } catch (error) {
+    console.error("Invalid JSON body:", error);
     return {
       statusCode: 400,
       body: JSON.stringify({ error: "Invalid JSON body." }),
@@ -18,6 +26,7 @@ exports.handler = async function (event) {
 
   const apiKey = process.env.GOOGLE_API_KEY;
   if (!apiKey) {
+    console.error("Missing GOOGLE_API_KEY environment variable.");
     return {
       statusCode: 500,
       body: JSON.stringify({
@@ -48,9 +57,17 @@ exports.handler = async function (event) {
       },
     };
   } catch (error) {
+    console.error("Generate function error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: error.message || "Unknown error" }),
+      body: JSON.stringify({
+        error: error.message || "Unknown error",
+        type: error.name,
+        stack: process.env.NODE_ENV !== "production" ? error.stack : undefined,
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
     };
   }
 };
