@@ -1,8 +1,10 @@
 # Ignore local secrets and environment configuration
-api-key.js
 .env
 .env.local
 
 # Node modules and build artifacts (if added later)
 node_modules/
 .DS_Store
+
+# Local Netlify folder
+.netlify

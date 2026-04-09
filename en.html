@@ -269,13 +269,13 @@
       </div>
     </div>
 
-    <script src="api-key.js"></script>
     <script>
       // Initialize icons
       lucide.createIcons();
 
       // API settings (Gemini)
-      const apiKey = window.API_KEY || "";
+      const API_URL = "/api/generate";
+      let generationsLeft = 1;
 
       // DOM elements
       const countryInput = document.getElementById("countryInput");
@@ -367,17 +367,10 @@
         };
 
         try {
-          if (!apiKey) {
-            throw new Error(
-              "API key not found. Please add it to api-key.js and do not commit the real key.",
-            );
-          }
-
           const data = await fetchWithRetry(API_URL, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
-              "X-goog-api-key": apiKey,
             },
             body: JSON.stringify(payload),
           });
